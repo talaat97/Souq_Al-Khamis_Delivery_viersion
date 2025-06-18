@@ -23,6 +23,10 @@ class ArchiveOrders extends StatelessWidget {
             statusRequest: pageController.statusRequest,
             color: colorCard(pageController.archivedOrders[index].orderStatus!),
             orderModel: pageController.archivedOrders[index],
+            goToOrderDetails: () {
+              pageController.goToOrderDetails(pageController
+                  .goToOrderDetails(pageController.archivedOrders[index]));
+            },
           ),
         ),
       ),

@@ -15,7 +15,7 @@ class AcceptedController extends GetxController {
   StatusRequest statusRequest = StatusRequest.loading;
   MyServices myServices = Get.find();
   List<OrderModel> acceptedOrders = [];
-  var accessToken;
+  late String? accessToken;
   var archivedcontroller = Get.put(Archivedcontroller());
   getAcceptedOrders() async {
     acceptedOrders.clear();

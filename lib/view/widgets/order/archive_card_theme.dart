@@ -10,10 +10,12 @@ class ArchiveCardTheme extends StatelessWidget {
   final OrderModel orderModel;
   final StatusRequest statusRequest;
   final Color color;
+  final void Function()? goToOrderDetails;
   const ArchiveCardTheme(
       {super.key,
       required this.orderModel,
       required this.statusRequest,
+      required this.goToOrderDetails,
       required this.color});
 
   @override
@@ -76,7 +78,7 @@ class ArchiveCardTheme extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10)),
                     padding: const EdgeInsets.all(8),
                     child: InkWell(
-                      onTap: () {},
+                      onTap: goToOrderDetails,
                       child: const Text(
                         'Details',
                         style: TextStyle(fontSize: 18, color: AppColor.white),

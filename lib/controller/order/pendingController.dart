@@ -71,11 +71,6 @@ class PendingController extends GetxController {
     }
   }
 
-  changePage(name) {
-    namePage = name;
-    update();
-  }
-
   @override
   void onInit() {
     getPendingOrders();

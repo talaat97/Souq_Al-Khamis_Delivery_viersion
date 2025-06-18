@@ -25,6 +25,10 @@ class AcceptedOrders extends StatelessWidget {
             orderArchive: () {
               pageController.doneOrder(pageController.acceptedOrders[index]);
             },
+            goToOrderDetails: () {
+              pageController
+                  .goToOrderDetails(pageController.acceptedOrders[index]);
+            },
           ),
         ),
       ),

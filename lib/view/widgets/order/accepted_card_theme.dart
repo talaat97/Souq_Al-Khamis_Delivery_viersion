@@ -13,12 +13,14 @@ class AcceptedThemeCard extends StatelessWidget {
   final StatusRequest statusRequest;
   final Color color;
   final void Function()? orderArchive;
+  final void Function()? goToOrderDetails;
   const AcceptedThemeCard({
     super.key,
     required this.orderModel,
     required this.statusRequest,
     required this.color,
     this.orderArchive,
+    required this.goToOrderDetails,
   });
 
   @override
@@ -81,7 +83,7 @@ class AcceptedThemeCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.all(8),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: goToOrderDetails,
                         child: const Text(
                           'Details',
                           style: TextStyle(fontSize: 18, color: AppColor.white),

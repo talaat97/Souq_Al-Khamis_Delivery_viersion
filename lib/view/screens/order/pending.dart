@@ -17,18 +17,17 @@ class PendingOrders extends StatelessWidget {
         widget: ListView.builder(
           itemCount: pageController.ordersPending.length,
           itemBuilder: (context, index) => PendingThemeCard(
-              statusRequest: pageController.statusRequest,
-              color:
-                  colorCard(pageController.ordersPending[index].orderStatus!),
-              orderModel: pageController.ordersPending[index],
-              orderApprove: () {
-                pageController
-                    .orderApprove(pageController.ordersPending[index]);
-              },
-              goToOrderDetails: () {
-                pageController
-                    .goToOrderDetails(pageController.ordersPending[index]);
-              }),
+            statusRequest: pageController.statusRequest,
+            color: colorCard(pageController.ordersPending[index].orderStatus!),
+            orderModel: pageController.ordersPending[index],
+            orderApprove: () {
+              pageController.orderApprove(pageController.ordersPending[index]);
+            },
+            goToOrderDetails: () {
+              pageController
+                  .goToOrderDetails(pageController.ordersPending[index]);
+            },
+          ),
         ),
       ),
     );
