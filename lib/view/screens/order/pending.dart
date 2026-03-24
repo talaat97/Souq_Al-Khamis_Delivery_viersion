@@ -11,12 +11,19 @@ class PendingOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(PendingController());
+
     return GetBuilder<PendingController>(
       builder: (pageController) => HandlingDataView(
         statusRequest: pageController.statusRequest,
-        widget: ListView.builder(
-          itemCount: pageController.ordersPending.length,
-          itemBuilder: (context, index) => PendingThemeCard(
+
+        // ⬇️ إضافة RefreshIndicator
+        widget: RefreshIndicator(
+          onRefresh: () async {
+            await pageController.getPendingOrders(); // إعادة تحميل الطلبات
+          },
+          child: ListView.builder(
+            itemCount: pageController.ordersPending.length,
+            itemBuilder: (context, index) => PendingThemeCard(
               statusRequest: pageController.statusRequest,
               color:
                   colorCard(pageController.ordersPending[index].orderStatus!),
@@ -28,7 +35,9 @@ class PendingOrders extends StatelessWidget {
               goToOrderDetails: () {
                 pageController
                     .goToOrderDetails(pageController.ordersPending[index]);
-              }),
+              },
+            ),
+          ),
         ),
       ),
     );

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:souq_al_khamis_delivey_version/controller/auth/login_controller.dart';
-import 'package:souq_al_khamis_delivey_version/core/constant/colors.dart';
+import 'package:souq_al_khamis_delivey_version/core/theme/app_theme.dart';
 import 'package:souq_al_khamis_delivey_version/core/function/alert.dart';
 import 'package:souq_al_khamis_delivey_version/core/function/valild.dart';
-import 'package:souq_al_khamis_delivey_version/view/widgets/auth/custom_button.dart';
-import 'package:souq_al_khamis_delivey_version/view/widgets/auth/head_text_auth.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_button.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_text_field.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_card.dart';
 import 'package:souq_al_khamis_delivey_version/view/widgets/auth/logo_auth.dart';
-import 'package:souq_al_khamis_delivey_version/view/widgets/auth/subhead_text_auth.dart';
-import 'package:souq_al_khamis_delivey_version/view/widgets/auth/text_field.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -17,68 +16,92 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     LogeinControllerImp controller = Get.put(LogeinControllerImp());
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
         title: Text(
           'Sign In',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: AppColor.grey),
+          style: TextStyles.font24BlackBold,
         ),
       ),
       // ignore: deprecated_member_use
       body: WillPopScope(
-          onWillPop: exitAlert,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            child: Form(
-              key: controller.formkey,
-              child: ListView(
-                children: [
-                  const LogoAuth(),
-                  HeadLineAuth(
-                    text: '10'.tr,
+        onWillPop: exitAlert,
+        child: AppBackground(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Form(
+                key: controller.formkey,
+                child: AppCard(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const LogoAuth(),
+                      const SizedBox(height: 16),
+                      Text(
+                        '10'.tr, // Welcome Text
+                        style: TextStyles.font24BlackBold,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '11'.tr, // Subtitle Text
+                        style: TextStyles.font14GrayRegular,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      AppTextField(
+                        hintText: '12'.tr,
+                        icon: Icons.email_outlined,
+                        controller: controller.email,
+                        validator: (val) {
+                          return checkVaild(val!, 5, 100, 'email');
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      GetBuilder<LogeinControllerImp>(
+                        builder: (controller) => AppTextField(
+                          hintText: '13'.tr,
+                          icon: Icons.lock_outline,
+                          isPassword: controller.isShowPassword,
+                          controller: controller.password,
+                          validator: (val) {
+                            return checkVaild(val!, 3, 30, 'password');
+                          },
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              controller.isShowPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: AppColor.textTertiary,
+                            ),
+                            onPressed: () {
+                              controller.showPassword();
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      GetBuilder<LogeinControllerImp>(
+                        builder: (controller) => AppButton(
+                          text: '15'.tr, // Login
+                          onPressed: () {
+                            controller.login();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  SubHeadText(text: '11'.tr),
-                  const SizedBox(height: 30),
-                  CustomTextField(
-                    valid: (val) {
-                      return checkVaild(val!, 5, 100, 'email');
-                    },
-                    labelText: "18".tr,
-                    hintText: '12'.tr,
-                    myIcon: Icons.email_outlined,
-                    myController: controller.email,
-                  ),
-                  const SizedBox(height: 20),
-                  GetBuilder<LogeinControllerImp>(
-                    builder: (controller) => CustomTextField(
-                      obscureText: controller.isShowPassword,
-                      onTapIcon: () {
-                        controller.showPassword();
-                      },
-                      valid: (val) {
-                        return checkVaild(val!, 5, 30, 'password');
-                      },
-                      labelText: "19".tr,
-                      hintText: '13'.tr,
-                      myIcon: Icons.password_outlined,
-                      myController: controller.password,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomButtonInLogeIn(
-                    text: '15'.tr,
-                    onTap: () {
-                      controller.login();
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

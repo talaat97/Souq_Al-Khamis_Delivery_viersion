@@ -1,6 +1,6 @@
 class Applink {
-  //localhost= 10.0.2.2
-  static const String server = 'http://10.0.2.2/ecommerce/delivery';
+  static const String localhost = '192.168.1.6';
+  static const String server = 'http://$localhost/ecommerce/delivery';
   //============================================ Auth ============================================//
   static const String loginLink = '$server/Auth/login.php';
   //============================================ orders ============================================//

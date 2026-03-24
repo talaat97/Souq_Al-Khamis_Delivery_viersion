@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:souq_al_khamis_delivey_version/core/constant/themes.dart';
+import 'package:souq_al_khamis_delivey_version/core/theme/app_theme.dart';
 import 'package:souq_al_khamis_delivey_version/core/services/services.dart';
 
 class LocaleController extends GetxController {
   Locale? language;
-  ThemeData appTheme = themeEnglish;
+  ThemeData appTheme = AppTheme.themeEnglish;
   MyServices myServices = Get.find();
 
   chnageLang(String langcode) {
     Locale locale = Locale(langcode);
     myServices.sharedPreferences.setString("lang", langcode);
-    appTheme = langcode == 'ar' ? themeArabic : themeEnglish;
+    appTheme = langcode == 'ar' ? AppTheme.themeArabic : AppTheme.themeEnglish;
     Get.changeTheme(appTheme);
     Get.updateLocale(locale);
   }
@@ -23,13 +23,13 @@ class LocaleController extends GetxController {
     String? langOfRefrence = myServices.sharedPreferences.getString("lang");
     if (langOfRefrence == 'ar') {
       language = const Locale('ar');
-      appTheme = themeArabic;
+      appTheme = AppTheme.themeArabic;
     } else if (langOfRefrence == 'en') {
       language = const Locale('en');
-      appTheme = themeEnglish;
+      appTheme = AppTheme.themeEnglish;
     } else {
       language = Locale(Get.deviceLocale!.languageCode);
-      appTheme = language!.languageCode == 'ar' ? themeArabic : themeEnglish;
+      appTheme = language!.languageCode == 'ar' ? AppTheme.themeArabic : AppTheme.themeEnglish;
     }
 
     super.onInit();

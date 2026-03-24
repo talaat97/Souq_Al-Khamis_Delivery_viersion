@@ -60,7 +60,6 @@ dependencies:
   path: 
   # Qrcode 
   qr_flutter: 
-  scan: 
   grouped_list:
   url_launcher: 
   dropdown_search: 
@@ -74,14 +73,14 @@ dependencies:
   google_sign_in:   
   device_preview: 
   responsive_builder:
-  image_pickers: 
+
   #Other
   pinput: 
   lottie: 
   dio: 
+  flutter_ringtone_player: ^4.0.0+4
   googleapis_auth:
   googleapis:
-  flutter_ringtone_player: ^4.0.0+3
   rating_dialog: ^2.0.4
 dev_dependencies:
   flutter_test:
