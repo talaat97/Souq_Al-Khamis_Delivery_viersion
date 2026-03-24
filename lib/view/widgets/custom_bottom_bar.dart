@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controller/home/bottomNavBar.dart';
-import '../../core/constant/colors.dart';
+import '../../core/theme/app_theme.dart';
 
 class CustomButtonbar extends GetView {
   const CustomButtonbar({super.key});
@@ -11,8 +11,9 @@ class CustomButtonbar extends GetView {
   Widget build(BuildContext context) {
     return GetBuilder<BottomNavBarControllerImp>(
       builder: (pageController) => BottomAppBar(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        color: AppColor.black,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+        color: AppColor.cardBackground,
+        elevation: 10,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -50,21 +51,29 @@ class OneButtonAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: onPressed,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(pageIcon,
-              size: active == true ? 35 : 25,
-              color: active == true ? AppColor.primaryColor : AppColor.grey),
-          Text(
-            pageName,
-            style: TextStyle(
-                color: active == true ? AppColor.primaryColor : AppColor.grey),
-          ),
-        ],
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(pageIcon,
+                size: active == true ? 28 : 24,
+                color: active == true ? AppColor.primaryColor : AppColor.textTertiary),
+            const SizedBox(height: 4),
+            Text(
+              pageName,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: active == true ? FontWeight.bold : FontWeight.normal,
+                  color: active == true ? AppColor.primaryColor : AppColor.textTertiary),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+

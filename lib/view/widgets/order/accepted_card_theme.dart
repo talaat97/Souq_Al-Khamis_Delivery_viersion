@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:jiffy/jiffy.dart';
 import 'package:souq_al_khamis_delivey_version/core/class/status_request.dart';
-
-import '../../../core/class/handling_data.dart';
-import '../../../core/constant/colors.dart';
-import '../../../core/function/order_functions.dart';
-import '../../../data/datacorse/remote/model/order_model.dart';
+import 'package:souq_al_khamis_delivey_version/core/class/handling_data.dart';
+import 'package:souq_al_khamis_delivey_version/core/theme/app_theme.dart';
+import 'package:souq_al_khamis_delivey_version/core/function/order_functions.dart';
+import 'package:souq_al_khamis_delivey_version/data/datacorse/remote/model/order_model.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_card.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_badge.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_button.dart';
 
 class AcceptedThemeCard extends StatelessWidget {
   final OrderModel orderModel;
@@ -26,89 +27,92 @@ class AcceptedThemeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return HandlingDataView(
-        statusRequest: statusRequest,
-        widget: Card(
-          color: color,
-          margin: const EdgeInsets.all(10),
-          elevation: 5,
-          child: Container(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Order ID : ${orderModel.orderId}',
-                      style: const TextStyle(fontSize: 30),
+      statusRequest: statusRequest,
+      widget: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: AppCard(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Order #${orderModel.orderId}', style: TextStyles.font18DarkBlueBold),
+                  AppBadge(text: Jiffy.parse('${orderModel.orderDatetime}').fromNow(), color: color),
+                ],
+              ),
+              const SizedBox(height: 16),
+              
+              Row(
+                children: [
+                   const Icon(Icons.person_outline, size: 20, color: AppColor.textSecondary),
+                   const SizedBox(width: 8),
+                   Expanded(child: Text('${orderModel.addressName ?? "Customer"}', style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary))),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                   const Icon(Icons.location_on_outlined, size: 20, color: AppColor.textSecondary),
+                   const SizedBox(width: 8),
+                   Expanded(child: Text('${orderModel.addressCity ?? ""}, ${orderModel.addressStreet ?? ""}', style: TextStyles.font14GrayRegular)),
+                ],
+              ),
+              
+              const SizedBox(height: 16),
+              const Divider(color: AppColor.neutralLight),
+              const SizedBox(height: 12),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Payment', style: TextStyles.font13GrayRegular),
+                  Text('${printOrrderPaymentMethod(orderModel.orderPaymentMethod!)}', style: TextStyles.font14DarkBlueMedium),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Type', style: TextStyles.font13GrayRegular),
+                  Text('${printOrderType(orderModel.orderType!)}', style: TextStyles.font14DarkBlueMedium),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Total Price', style: TextStyles.font14GrayRegular),
+                  Text('\$${orderModel.orderTotalPrice}', style: TextStyles.font18DarkBlueBold.copyWith(color: AppColor.primaryColor)),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: AppButton(
+                      text: 'Details',
+                      isOutlined: true,
+                      onPressed: goToOrderDetails ?? () {},
                     ),
-                    Text(
-                      Jiffy.parse('${orderModel.orderDatetime}').fromNow(),
-                      style: const TextStyle(fontSize: 15),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 1,
+                    child: AppButton(
+                      text: 'Done',
+                      onPressed: orderArchive ?? () {},
                     ),
-                  ],
-                ),
-                const Divider(),
-                Text(
-                  ' payment  : ${printOrrderPaymentMethod(orderModel.orderPaymentMethod!)}',
-                  style: const TextStyle(fontSize: 20, color: AppColor.grey),
-                ),
-                Text(
-                  ' Type  : ${printOrderType(orderModel.orderType!)}',
-                  style: const TextStyle(fontSize: 20, color: AppColor.grey),
-                ),
-                Text(
-                  ' Delivery : ${printDeliverPriceOrder(orderModel.orderPriceDelivery!)}',
-                  style: const TextStyle(fontSize: 20, color: AppColor.grey),
-                ),
-                Text(
-                  'Order Price  : ${orderModel.orderPrice}',
-                  style: const TextStyle(fontSize: 20, color: AppColor.grey),
-                ),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total Price: ${orderModel.orderTotalPrice}\$',
-                      style: const TextStyle(
-                          fontSize: 23,
-                          color: AppColor.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: AppColor.grey600,
-                          borderRadius: BorderRadius.circular(10)),
-                      padding: const EdgeInsets.all(8),
-                      child: InkWell(
-                        onTap: goToOrderDetails,
-                        child: const Text(
-                          'Details',
-                          style: TextStyle(fontSize: 18, color: AppColor.white),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: AppColor.green2Color,
-                          borderRadius: BorderRadius.circular(10)),
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.only(left: 10, right: 10),
-                      child: InkWell(
-                        onTap: orderArchive,
-                        child: const Text(
-                          '  Done  ',
-                          style: TextStyle(fontSize: 18, color: AppColor.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

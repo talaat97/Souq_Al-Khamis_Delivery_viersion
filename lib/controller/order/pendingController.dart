@@ -5,7 +5,6 @@ import '../../core/class/status_request.dart';
 
 import '../../core/constant/routs_page.dart';
 import '../../core/function/handling_data_controller.dart';
-import '../../core/function/notification_helper.dart';
 import '../../core/services/services.dart';
 import '../../data/datacorse/remote/model/order_model.dart';
 import '../../data/datacorse/remote/orders/OrdersData.dart';
@@ -15,7 +14,7 @@ class PendingController extends GetxController {
   StatusRequest statusRequest = StatusRequest.loading;
   MyServices myServices = Get.find();
   List<OrderModel> ordersPending = [];
-  String namePage = 'pending';
+
   dynamic accessToken;
   var acceptedController = Get.put(AcceptedController());
   getPendingOrders() async {
@@ -45,22 +44,32 @@ class PendingController extends GetxController {
   orderApprove(OrderModel orderModel) async {
     statusRequest = StatusRequest.loading;
     update();
-    accessToken = await NotificationsHelper().getAccessToken();
+
     Map data = {
       "deliveryId":
           myServices.sharedPreferences.getString('deliveryId').toString(),
-      "deviceToken": orderModel.orderUserDevicetoken,
       "deliveryName":
           myServices.sharedPreferences.getString('deliveryName').toString(),
       "userId": orderModel.orderUserid,
       "orderId": orderModel.orderId,
-      "accessToken": accessToken,
       "userDeviceToken": orderModel.orderUserDevicetoken,
     };
-    var response = await ordersData.orderApprove(data);
+    print(data);
+    var response = await ordersData.orderApprove(data).timeout(
+      const Duration(seconds: 7),
+      onTimeout: () {
+        return {'status': 'failure', 'message': 'Request timed out'};
+      },
+    );
     statusRequest = handlingData(response);
+
     if (StatusRequest.sucess == statusRequest) {
       if (response['status'] == 'success') {
+        await Future.wait<void>([
+          getPendingOrders(),
+          acceptedController.getAcceptedOrders(),
+        ]);
+
         getPendingOrders();
         acceptedController.getAcceptedOrders();
         statusRequest = StatusRequest.sucess;

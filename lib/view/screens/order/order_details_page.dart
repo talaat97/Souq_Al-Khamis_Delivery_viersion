@@ -4,8 +4,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../controller/order/orderDetailsController.dart';
 import '../../../core/class/handling_data.dart';
-import '../../../core/constant/colors.dart';
-import '../../widgets/order/details_text_table_style.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../widgets/shared/app_card.dart';
+import '../../widgets/shared/section_title.dart';
 
 class OrderDetails extends StatelessWidget {
   const OrderDetails({super.key});
@@ -14,101 +15,150 @@ class OrderDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     var pageController = Get.put(Orderdetailscontroller());
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Details'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColor.textPrimary),
+        title: Text(
+          'Order Details',
+          style: TextStyles.font24BlackBold,
+        ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          GetBuilder<Orderdetailscontroller>(
-            builder: (controller) => HandlingDataView(
-              statusRequest: controller.statusRequest,
-              widget: Card(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Table(
-                    children: [
-                      const TableRow(children: [
-                        DetailsTextTableStyle(text: 'Items'),
-                        DetailsTextTableStyle(text: 'count'),
-                        DetailsTextTableStyle(text: 'Price')
-                      ]),
-                      ...List.generate(
-                        pageController.orderDetailsList.length,
-                        (index) => TableRow(
+      body: AppBackground(
+        child: GetBuilder<Orderdetailscontroller>(
+          builder: (controller) => HandlingDataView(
+            statusRequest: controller.statusRequest,
+            widget: SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 100, bottom: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SectionTitle(title: 'Order Items'),
+                  AppCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            DetailsTextTableStyle(
-                              text: pageController
-                                  .orderDetailsList[index].iteamsName!,
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                            DetailsTextTableStyle(
-                              text: pageController
-                                  .orderDetailsList[index].countItems!
-                                  .toString(),
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                            DetailsTextTableStyle(
-                              text: '${pageController.itemPriceDiscount(
-                                double.parse(pageController
-                                    .orderDetailsList[index].iteamsPrice!),
-                                double.parse(pageController
-                                    .orderDetailsList[index].iteamsDiscount!),
-                              )}',
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
+                            Expanded(flex: 3, child: Text('Item', style: TextStyles.font14GrayRegular)),
+                            Expanded(flex: 1, child: Text('Qty', textAlign: TextAlign.center, style: TextStyles.font14GrayRegular)),
+                            Expanded(flex: 1, child: Text('Price', textAlign: TextAlign.right, style: TextStyles.font14GrayRegular)),
                           ],
                         ),
-                      ),
-                    ],
+                        const Divider(height: 24, color: AppColor.neutralLight),
+                        ...List.generate(
+                          pageController.orderDetailsList.length,
+                          (index) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    pageController.orderDetailsList[index].iteamsName!,
+                                    style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    pageController.orderDetailsList[index].countItems!.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyles.font15DarkBlueMedium,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    '\$${pageController.itemPriceDiscount(
+                                      double.parse(pageController.orderDetailsList[index].iteamsPrice!),
+                                      double.parse(pageController.orderDetailsList[index].iteamsDiscount!),
+                                    )}',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyles.font15DarkBlueMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  
+                  const SizedBox(height: 16),
+                  AppCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Total Amount', style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textSecondary)),
+                        Text('\$${pageController.orderModel.orderTotalPrice}', style: TextStyles.font24OrangeBold),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  const SectionTitle(title: 'Delivery Details'),
+                  
+                  if (pageController.orderModel.orderType == '0')
+                    AppCard(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColor.primaryColor.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.location_on, color: AppColor.primaryColor),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('${pageController.orderModel.addressName}, ${pageController.orderModel.addressCity}', 
+                                    style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary)),
+                                const SizedBox(height: 4),
+                                Text('${pageController.orderModel.addressStreet}', 
+                                    style: TextStyles.font14GrayRegular),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  
+                  if (pageController.orderModel.orderType == '1')
+                    AppCard(
+                      padding: EdgeInsets.zero,
+                      child: SizedBox(
+                        height: 300,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: GoogleMap(
+                            mapType: MapType.normal,
+                            initialCameraPosition: pageController.cameraPosition!,
+                            onMapCreated: (GoogleMapController controllerMap) {
+                              pageController.googleMapController!.complete(controllerMap);
+                            },
+                            markers: pageController.marker.toSet(),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: DetailsTextTableStyle(
-              text:
-                  'total price:${pageController.orderModel.orderTotalPrice}\$',
-              fontSize: 25,
-            ),
-          ),
-          Card(
-            child: Column(
-              children: [
-                if (pageController.orderModel.orderType == '0')
-                  ListTile(
-                    title: Text(
-                      '${pageController.orderModel.addressName} ,${pageController.orderModel.addressCity}',
-                      style: const TextStyle(
-                          color: AppColor.primaryColor, fontSize: 25),
-                    ),
-                    subtitle:
-                        Text('${pageController.orderModel.addressStreet}'),
-                    subtitleTextStyle:
-                        const TextStyle(color: AppColor.black, fontSize: 15),
-                  ),
-                if (pageController.orderModel.orderType == '1')
-                  Container(
-                    height: 350,
-                    child: GoogleMap(
-                      mapType: MapType.normal,
-                      initialCameraPosition: pageController.cameraPosition!,
-                      onMapCreated: (GoogleMapController controllerMap) {
-                        pageController.googleMapController!
-                            .complete(controllerMap);
-                      },
-                      markers: pageController.marker.toSet(),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

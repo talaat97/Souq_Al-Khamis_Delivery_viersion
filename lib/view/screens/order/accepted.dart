@@ -16,19 +16,25 @@ class AcceptedOrders extends StatelessWidget {
     return GetBuilder<AcceptedController>(
       builder: (pageController) => HandlingDataView(
         statusRequest: pageController.statusRequest,
-        widget: ListView.builder(
-          itemCount: pageController.acceptedOrders.length,
-          itemBuilder: (context, index) => AcceptedThemeCard(
-            statusRequest: pageController.statusRequest,
-            color: colorCard(pageController.acceptedOrders[index].orderStatus!),
-            orderModel: pageController.acceptedOrders[index],
-            orderArchive: () {
-              pageController.doneOrder(pageController.acceptedOrders[index]);
-            },
-            goToOrderDetails: () {
-              pageController
-                  .goToOrderDetails(pageController.acceptedOrders[index]);
-            },
+        widget: RefreshIndicator(
+          onRefresh: () async {
+            await pageController.getAcceptedOrders(); // إعادة تحميل الطلبات
+          },
+          child: ListView.builder(
+            itemCount: pageController.acceptedOrders.length,
+            itemBuilder: (context, index) => AcceptedThemeCard(
+              statusRequest: pageController.statusRequest,
+              color:
+                  colorCard(pageController.acceptedOrders[index].orderStatus!),
+              orderModel: pageController.acceptedOrders[index],
+              orderArchive: () {
+                pageController.doneOrder(pageController.acceptedOrders[index]);
+              },
+              goToOrderDetails: () {
+                pageController
+                    .goToOrderDetails(pageController.acceptedOrders[index]);
+              },
+            ),
           ),
         ),
       ),
