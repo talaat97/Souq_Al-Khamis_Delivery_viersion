@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../controller/home/bottomNavBar.dart';
+import '../../controller/home/bottom_nav_bar.dart';
 import '../../core/theme/app_theme.dart';
 
-class CustomButtonbar extends GetView {
-  const CustomButtonbar({super.key});
+class BottomNavBar extends GetView<BottomNavBarControllerImp> {
+  const BottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return GetBuilder<BottomNavBarControllerImp>(
-      builder: (pageController) => BottomAppBar(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+      builder: (controller) => BottomAppBar(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
         color: AppColor.cardBackground,
         elevation: 10,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ...List.generate(
-              pageController.listPage.length,
-              (index) => OneButtonAppBar(
-                pageName: pageController.titlePage[index]['title'],
-                pageIcon: pageController.titlePage[index]['icon'],
+          children: List.generate(
+            controller.listPage.length,
+            (index) => Expanded(
+              child: OneButtonAppBar(
+                pageName: controller.titlePage[index]['title'],
+                pageIcon: controller.titlePage[index]['icon'],
+                active: controller.currentPage == index,
                 onPressed: () {
-                  pageController.changePage(index);
+                  controller.changePage(index);
                 },
-                active: pageController.currentPage == index ? true : false,
+                width: width,
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -39,36 +41,50 @@ class CustomButtonbar extends GetView {
 class OneButtonAppBar extends StatelessWidget {
   final String pageName;
   final IconData pageIcon;
-  bool? active;
-  final void Function() onPressed;
-  OneButtonAppBar({
+  final bool active;
+  final VoidCallback onPressed;
+  final double width;
+
+  const OneButtonAppBar({
     super.key,
     required this.pageName,
     required this.pageIcon,
     required this.onPressed,
-    this.active,
+    required this.active,
+    required this.width,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Responsive sizes
+    final iconSize = width * 0.06; // adjust automatically
+    final fontSize = width * 0.028;
+
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(pageIcon,
-                size: active == true ? 28 : 24,
-                color: active == true ? AppColor.primaryColor : AppColor.textTertiary),
+            Icon(
+              pageIcon,
+              size: active ? iconSize + 2 : iconSize,
+              color: active ? AppColor.primaryColor : AppColor.textTertiary,
+            ),
             const SizedBox(height: 4),
-            Text(
-              pageName,
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: active == true ? FontWeight.bold : FontWeight.normal,
-                  color: active == true ? AppColor.primaryColor : AppColor.textTertiary),
+            FittedBox(
+              child: Text(
+                pageName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                  color: active ? AppColor.primaryColor : AppColor.textTertiary,
+                ),
+              ),
             ),
           ],
         ),
@@ -76,4 +92,3 @@ class OneButtonAppBar extends StatelessWidget {
     );
   }
 }
-

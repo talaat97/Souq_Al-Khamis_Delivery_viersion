@@ -45,7 +45,7 @@ class ArchiveCardTheme extends StatelessWidget {
                 children: [
                    const Icon(Icons.person_outline, size: 20, color: AppColor.textTertiary),
                    const SizedBox(width: 8),
-                   Expanded(child: Text('${orderModel.addressName ?? "Customer"}', style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textSecondary))),
+                   Expanded(child: Text(orderModel.addressName ?? "Customer", style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textSecondary))),
                 ],
               ),
               const SizedBox(height: 8),

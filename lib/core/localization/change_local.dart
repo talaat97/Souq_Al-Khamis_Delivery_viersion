@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:souq_al_khamis_delivey_version/core/theme/app_theme.dart';
 import 'package:souq_al_khamis_delivey_version/core/services/services.dart';
+import 'package:souq_al_khamis_delivey_version/controller/home/bottom_nav_bar.dart';
 
 class LocaleController extends GetxController {
   Locale? language;
@@ -15,6 +16,11 @@ class LocaleController extends GetxController {
     appTheme = langcode == 'ar' ? AppTheme.themeArabic : AppTheme.themeEnglish;
     Get.changeTheme(appTheme);
     Get.updateLocale(locale);
+    
+    // Update the bottom navigation bar to reflect the new language instantly
+    if (Get.isRegistered<BottomNavBarControllerImp>()) {
+      Get.find<BottomNavBarControllerImp>().update();
+    }
   }
 
   @override

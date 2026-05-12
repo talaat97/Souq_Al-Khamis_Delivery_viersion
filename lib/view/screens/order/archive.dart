@@ -5,7 +5,7 @@ import 'package:souq_al_khamis_delivey_version/core/class/handling_data.dart';
 
 import 'package:souq_al_khamis_delivey_version/core/function/order_functions.dart';
 
-import '../../../controller/order/archivedController.dart';
+import '../../../controller/order/archived_controller.dart';
 import '../../widgets/order/archive_card_theme.dart';
 
 class ArchiveOrders extends StatelessWidget {
@@ -13,20 +13,26 @@ class ArchiveOrders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(Archivedcontroller());
-    return GetBuilder<Archivedcontroller>(
+    Get.put(ArchivedController());
+    return GetBuilder<ArchivedController>(
       builder: (pageController) => HandlingDataView(
         statusRequest: pageController.statusRequest,
-        widget: ListView.builder(
-          itemCount: pageController.archivedOrders.length,
-          itemBuilder: (context, index) => ArchiveCardTheme(
-            statusRequest: pageController.statusRequest,
-            color: colorCard(pageController.archivedOrders[index].orderStatus!),
-            orderModel: pageController.archivedOrders[index],
-            goToOrderDetails: () {
-              pageController.goToOrderDetails(pageController
-                  .goToOrderDetails(pageController.archivedOrders[index]));
-            },
+        widget: RefreshIndicator(
+          onRefresh: () async {
+            await pageController.getArchivedOrders();
+          },
+          child: ListView.builder(
+            itemCount: pageController.archivedOrders.length,
+            itemBuilder: (context, index) => ArchiveCardTheme(
+              statusRequest: pageController.statusRequest,
+              color:
+                  colorCard(pageController.archivedOrders[index].orderStatus!),
+              orderModel: pageController.archivedOrders[index],
+              goToOrderDetails: () {
+                pageController
+                    .goToOrderDetails(pageController.archivedOrders[index]);
+              },
+            ),
           ),
         ),
       ),

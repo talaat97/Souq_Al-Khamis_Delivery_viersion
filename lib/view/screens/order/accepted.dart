@@ -5,7 +5,7 @@ import 'package:souq_al_khamis_delivey_version/core/class/handling_data.dart';
 import 'package:souq_al_khamis_delivey_version/core/function/order_functions.dart';
 import 'package:souq_al_khamis_delivey_version/view/widgets/order/accepted_card_theme.dart';
 
-import '../../../controller/order/acceptedController.dart';
+import '../../../controller/order/accepted_controller.dart';
 
 class AcceptedOrders extends StatelessWidget {
   const AcceptedOrders({super.key});
@@ -14,13 +14,13 @@ class AcceptedOrders extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(AcceptedController());
     return GetBuilder<AcceptedController>(
-      builder: (pageController) => HandlingDataView(
-        statusRequest: pageController.statusRequest,
-        widget: RefreshIndicator(
-          onRefresh: () async {
-            await pageController.getAcceptedOrders(); // إعادة تحميل الطلبات
-          },
-          child: ListView.builder(
+      builder: (pageController) => RefreshIndicator(
+        onRefresh: () async {
+          await pageController.getAcceptedOrders();
+        },
+        child: HandlingDataView(
+          statusRequest: pageController.statusRequest,
+          widget: ListView.builder(
             itemCount: pageController.acceptedOrders.length,
             itemBuilder: (context, index) => AcceptedThemeCard(
               statusRequest: pageController.statusRequest,
@@ -28,7 +28,8 @@ class AcceptedOrders extends StatelessWidget {
                   colorCard(pageController.acceptedOrders[index].orderStatus!),
               orderModel: pageController.acceptedOrders[index],
               orderArchive: () {
-                pageController.doneOrder(pageController.acceptedOrders[index]);
+                pageController
+                    .archiveOrder(pageController.acceptedOrders[index]);
               },
               goToOrderDetails: () {
                 pageController

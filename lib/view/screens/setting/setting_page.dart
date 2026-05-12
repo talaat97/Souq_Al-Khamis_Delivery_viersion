@@ -24,7 +24,10 @@ class SettingPage extends StatelessWidget {
                 color: AppColor.cardBackground,
                 shape: BoxShape.circle,
                 boxShadow: [
-                  BoxShadow(color: AppColor.primaryColor.withOpacity(0.15), blurRadius: 20, spreadRadius: 5),
+                  BoxShadow(
+                      color: AppColor.primaryColor.withOpacity(0.15),
+                      blurRadius: 20,
+                      spreadRadius: 5),
                 ],
               ),
               child: const CircleAvatar(
@@ -41,14 +44,16 @@ class SettingPage extends StatelessWidget {
               children: [
                 GetBuilder<SettingsContoller>(
                   builder: (controller) => SwitchListTile(
-                    title: Text('50'.tr, style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary)),
+                    title: Text('50'.tr,
+                        style: TextStyles.font16WhiteSemiBold
+                            .copyWith(color: AppColor.textPrimary)),
                     activeColor: AppColor.primaryColor,
-                    value: controller.notifactionSwitch,
-                    secondary: const Icon(Icons.notifications_active_outlined, color: AppColor.textSecondary),
-                    onChanged: (value) {
-                      controller.notifactionSwitch = value;
-                      controller.diableNotification();
-                    },
+                    inactiveThumbColor: Colors.grey,
+                    inactiveTrackColor: Colors.grey.shade400,
+                    value: controller.isNotificationEnabled,
+                    secondary: const Icon(Icons.notifications_active_outlined,
+                        color: AppColor.secondaryColor),
+                    onChanged: controller.onchageSwitch,
                   ),
                 ),
                 const Divider(height: 1, color: AppColor.neutralLight),
@@ -87,7 +92,7 @@ class TextInCardSeetting extends StatelessWidget {
   final void Function()? onTap;
   final IconData icon;
   final bool isDestructive;
-  
+
   const TextInCardSeetting({
     super.key,
     required this.title,
@@ -102,8 +107,7 @@ class TextInCardSeetting extends StatelessWidget {
       title: Text(
         title,
         style: TextStyles.font16WhiteSemiBold.copyWith(
-          color: isDestructive ? AppColor.errorColor : AppColor.textPrimary
-        ),
+            color: isDestructive ? AppColor.errorColor : AppColor.textPrimary),
       ),
       onTap: onTap,
       leading: Icon(

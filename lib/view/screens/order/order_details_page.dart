@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../controller/order/orderDetailsController.dart';
+import 'package:souq_al_khamis_delivey_version/view/widgets/shared/app_button.dart';
+import '../../../controller/order/order_details_controller.dart';
 import '../../../core/class/handling_data.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/shared/app_card.dart';
@@ -31,7 +34,8 @@ class OrderDetails extends StatelessWidget {
           builder: (controller) => HandlingDataView(
             statusRequest: controller.statusRequest,
             widget: SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 100, bottom: 24),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 100, bottom: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -43,9 +47,20 @@ class OrderDetails extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(flex: 3, child: Text('Item', style: TextStyles.font14GrayRegular)),
-                            Expanded(flex: 1, child: Text('Qty', textAlign: TextAlign.center, style: TextStyles.font14GrayRegular)),
-                            Expanded(flex: 1, child: Text('Price', textAlign: TextAlign.right, style: TextStyles.font14GrayRegular)),
+                            Expanded(
+                                flex: 3,
+                                child: Text('Item',
+                                    style: TextStyles.font14GrayRegular)),
+                            Expanded(
+                                flex: 1,
+                                child: Text('Qty',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyles.font14GrayRegular)),
+                            Expanded(
+                                flex: 1,
+                                child: Text('Price',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyles.font14GrayRegular)),
                           ],
                         ),
                         const Divider(height: 24, color: AppColor.neutralLight),
@@ -59,14 +74,18 @@ class OrderDetails extends StatelessWidget {
                                 Expanded(
                                   flex: 3,
                                   child: Text(
-                                    pageController.orderDetailsList[index].iteamsName!,
-                                    style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary),
+                                    pageController
+                                        .orderDetailsList[index].iteamsName!,
+                                    style: TextStyles.font16WhiteSemiBold
+                                        .copyWith(color: AppColor.textPrimary),
                                   ),
                                 ),
                                 Expanded(
                                   flex: 1,
                                   child: Text(
-                                    pageController.orderDetailsList[index].countItems!.toString(),
+                                    pageController
+                                        .orderDetailsList[index].countItems!
+                                        .toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyles.font15DarkBlueMedium,
                                   ),
@@ -75,8 +94,12 @@ class OrderDetails extends StatelessWidget {
                                   flex: 1,
                                   child: Text(
                                     '\$${pageController.itemPriceDiscount(
-                                      double.parse(pageController.orderDetailsList[index].iteamsPrice!),
-                                      double.parse(pageController.orderDetailsList[index].iteamsDiscount!),
+                                      double.parse(pageController
+                                          .orderDetailsList[index]
+                                          .iteamsPrice!),
+                                      double.parse(pageController
+                                          .orderDetailsList[index]
+                                          .iteamsDiscount!),
                                     )}',
                                     textAlign: TextAlign.right,
                                     style: TextStyles.font15DarkBlueMedium,
@@ -89,22 +112,21 @@ class OrderDetails extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
-                  const SizedBox(height: 16),
                   AppCard(
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Total Amount', style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textSecondary)),
-                        Text('\$${pageController.orderModel.orderTotalPrice}', style: TextStyles.font24OrangeBold),
+                        Text('Total Amount',
+                            style: TextStyles.font16WhiteSemiBold
+                                .copyWith(color: AppColor.textSecondary)),
+                        Text('\$${pageController.orderModel.orderTotalPrice}',
+                            style: TextStyles.font24OrangeBold),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
                   const SectionTitle(title: 'Delivery Details'),
-                  
                   if (pageController.orderModel.orderType == '0')
                     AppCard(
                       padding: const EdgeInsets.all(16),
@@ -117,17 +139,21 @@ class OrderDetails extends StatelessWidget {
                               color: AppColor.primaryColor.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.location_on, color: AppColor.primaryColor),
+                            child: const Icon(Icons.location_on,
+                                color: AppColor.primaryColor),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${pageController.orderModel.addressName}, ${pageController.orderModel.addressCity}', 
-                                    style: TextStyles.font16WhiteSemiBold.copyWith(color: AppColor.textPrimary)),
+                                Text(
+                                    '${pageController.orderModel.addressName}, ${pageController.orderModel.addressCity}',
+                                    style: TextStyles.font16WhiteSemiBold
+                                        .copyWith(color: AppColor.textPrimary)),
                                 const SizedBox(height: 4),
-                                Text('${pageController.orderModel.addressStreet}', 
+                                Text(
+                                    '${pageController.orderModel.addressStreet}',
                                     style: TextStyles.font14GrayRegular),
                               ],
                             ),
@@ -135,8 +161,7 @@ class OrderDetails extends StatelessWidget {
                         ],
                       ),
                     ),
-                  
-                  if (pageController.orderModel.orderType == '1')
+                  if (pageController.orderModel.orderType == '0') ...[
                     AppCard(
                       padding: EdgeInsets.zero,
                       child: SizedBox(
@@ -144,16 +169,33 @@ class OrderDetails extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: GoogleMap(
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(
+                                () => EagerGestureRecognizer(),
+                              ),
+                            },
                             mapType: MapType.normal,
-                            initialCameraPosition: pageController.cameraPosition!,
+                            initialCameraPosition:
+                                pageController.cameraPosition!,
                             onMapCreated: (GoogleMapController controllerMap) {
-                              pageController.googleMapController!.complete(controllerMap);
+                              pageController.googleMapController!
+                                  .complete(controllerMap);
                             },
                             markers: pageController.marker.toSet(),
+                            myLocationEnabled: false,
+                            zoomControlsEnabled: false,
                           ),
                         ),
                       ),
                     ),
+                    SizedBox(height: 12),
+                    AppButton(
+                      text: 'tracking location',
+                      onPressed: () async {
+                        await controller.navigateTogoogleMap();
+                      },
+                    )
+                  ]
                 ],
               ),
             ),

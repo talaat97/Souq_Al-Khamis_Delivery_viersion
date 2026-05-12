@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
-import 'package:souq_al_khamis_delivey_version/controller/order/acceptedController.dart';
+import 'package:souq_al_khamis_delivey_version/controller/order/accepted_controller.dart';
+import 'package:souq_al_khamis_delivey_version/controller/order/track_location_contoller.dart';
+import 'package:souq_al_khamis_delivey_version/data/datacorse/models/delivery_model.dart';
 
 import '../../core/class/status_request.dart';
 
@@ -16,27 +20,30 @@ class PendingController extends GetxController {
   List<OrderModel> ordersPending = [];
 
   dynamic accessToken;
-  var acceptedController = Get.put(AcceptedController());
+
   getPendingOrders() async {
     ordersPending.clear();
     statusRequest = StatusRequest.loading;
     update();
+
     var response = await ordersData.getPendingOrders();
     statusRequest = handlingData(response);
-    if (StatusRequest.sucess == statusRequest) {
+    if (StatusRequest.success == statusRequest) {
       if (response['status'] == 'success') {
         List responseData = response['data'];
         ordersPending.addAll(responseData.map((e) => OrderModel.fromJson(e)));
-        statusRequest = StatusRequest.sucess;
+        statusRequest = StatusRequest.success;
       } else {
         statusRequest = StatusRequest.failure;
       }
+    } else {
+      statusRequest = StatusRequest.serverfailure;
     }
     update();
   }
 
   void goToOrderDetails(OrderModel orderModel) {
-    Get.toNamed(AppRoute.orderDeitails, arguments: {
+    Get.toNamed(AppRoute.orderDetails, arguments: {
       'orderModel': orderModel,
     });
   }
@@ -45,39 +52,36 @@ class PendingController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
 
+    final userString = myServices.sharedPreferences.getString('deliveryUser');
+    Map<String, dynamic> deliveryUser = jsonDecode(userString!);
+    DeliveryUser user = DeliveryUser.fromJson(deliveryUser);
+
     Map data = {
-      "deliveryId":
-          myServices.sharedPreferences.getString('deliveryId').toString(),
-      "deliveryName":
-          myServices.sharedPreferences.getString('deliveryName').toString(),
+      "deliveryId": user.id.toString(),
+      "deliveryName": user.name.toString(),
       "userId": orderModel.orderUserid,
       "orderId": orderModel.orderId,
       "userDeviceToken": orderModel.orderUserDevicetoken,
     };
-    print(data);
-    var response = await ordersData.orderApprove(data).timeout(
-      const Duration(seconds: 7),
-      onTimeout: () {
-        return {'status': 'failure', 'message': 'Request timed out'};
-      },
-    );
+
+    var response = await ordersData.orderApprove(data);
+
     statusRequest = handlingData(response);
 
-    if (StatusRequest.sucess == statusRequest) {
+    if (statusRequest == StatusRequest.success) {
       if (response['status'] == 'success') {
-        await Future.wait<void>([
-          getPendingOrders(),
-          acceptedController.getAcceptedOrders(),
-        ]);
-
-        getPendingOrders();
-        acceptedController.getAcceptedOrders();
-        statusRequest = StatusRequest.sucess;
+        await getPendingOrders();
+        await refreshOrderAccepted();
+        final trackController = Get.find<TrackLocationController>();
+        trackController.getCurrentLocation();
+        statusRequest = StatusRequest.success;
       } else {
         statusRequest = StatusRequest.failure;
       }
-      update();
+    } else {
+      statusRequest = StatusRequest.serverfailure;
     }
+    update();
   }
 
   @override
@@ -85,5 +89,10 @@ class PendingController extends GetxController {
     getPendingOrders();
 
     super.onInit();
+  }
+
+  refreshOrderAccepted() async {
+    AcceptedController acceptedController = Get.put(AcceptedController());
+    await acceptedController.getAcceptedOrders();
   }
 }

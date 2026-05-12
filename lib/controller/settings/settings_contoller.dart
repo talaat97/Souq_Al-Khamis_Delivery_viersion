@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:souq_al_khamis_delivey_version/core/constant/routs_page.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../core/function/notification_helper.dart';
+import '../../core/services/notification/notification_helper.dart';
 import '../../core/localization/change_local.dart';
 import '../../core/services/services.dart';
 
 class SettingsContoller extends GetxController {
   late String language;
-  bool notifactionSwitch = false;
+  bool isNotificationEnabled = true;
   MyServices myServices = Get.find();
   var languageController = Get.put(LocaleController());
   logOut() {
     myServices.sharedPreferences.setString('step', 'onboarding');
-    NotificationsHelper.firebaseMessaging.unsubscribeFromTopic('servises');
+    NotificationsHelper.instance.unsubscribeFromTopic('servises');
     Get.offAllNamed(AppRoute.login);
   }
 
@@ -22,14 +22,14 @@ class SettingsContoller extends GetxController {
   }
 
   diableNotification() {
-    if (notifactionSwitch) {
-      NotificationsHelper.firebaseMessaging.unsubscribeFromTopic('servises');
+    if (isNotificationEnabled) {
+      NotificationsHelper.instance.subscribeToTopic('servises');
     } else {
-      NotificationsHelper.firebaseMessaging.subscribeToTopic('servises');
+      NotificationsHelper.instance.unsubscribeFromTopic('servises');
     }
     print(
         '////////////////////////////////////////////////////////////////////');
-    print(notifactionSwitch);
+    print(isNotificationEnabled);
     print(
         '////////////////////////////////////////////////////////////////////');
     update();
@@ -58,5 +58,10 @@ class SettingsContoller extends GetxController {
         ],
       ),
     );
+  }
+
+  onchageSwitch(bool value) {
+    isNotificationEnabled = value;
+    diableNotification();
   }
 }

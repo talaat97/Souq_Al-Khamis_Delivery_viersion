@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:souq_al_khamis_delivey_version/core/class/handling_data.dart';
 import 'package:souq_al_khamis_delivey_version/core/function/order_functions.dart';
-import '../../../controller/order/pendingController.dart';
+import '../../../controller/order/pending_controller.dart';
 import '../../widgets/order/pending_theme_card.dart';
 
 class PendingOrders extends StatelessWidget {
@@ -13,15 +13,13 @@ class PendingOrders extends StatelessWidget {
     Get.put(PendingController());
 
     return GetBuilder<PendingController>(
-      builder: (pageController) => HandlingDataView(
-        statusRequest: pageController.statusRequest,
-
-        // ⬇️ إضافة RefreshIndicator
-        widget: RefreshIndicator(
-          onRefresh: () async {
-            await pageController.getPendingOrders(); // إعادة تحميل الطلبات
-          },
-          child: ListView.builder(
+      builder: (pageController) => RefreshIndicator(
+        onRefresh: () async {
+          await pageController.getPendingOrders();
+        },
+        child: HandlingDataView(
+          statusRequest: pageController.statusRequest,
+          widget: ListView.builder(
             itemCount: pageController.ordersPending.length,
             itemBuilder: (context, index) => PendingThemeCard(
               statusRequest: pageController.statusRequest,

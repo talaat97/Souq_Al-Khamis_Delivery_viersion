@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:souq_al_khamis_delivey_version/data/datacorse/models/delivery_model.dart';
 import 'package:souq_al_khamis_delivey_version/core/constant/routs_page.dart';
 import 'package:souq_al_khamis_delivey_version/core/services/services.dart';
 import 'package:souq_al_khamis_delivey_version/data/datacorse/remote/Auth/login_data.dart';
 
 import '../../core/class/status_request.dart';
 import '../../core/function/handling_data_controller.dart';
-import '../../core/function/notification_helper.dart';
+import '../../core/services/notification/notification_helper.dart';
 
 abstract class LogeinCotroller extends GetxController {
   login();
@@ -26,24 +29,28 @@ class LogeinControllerImp extends LogeinCotroller {
     if (formkey.currentState!.validate()) {
       statusRequest = StatusRequest.loading;
       update();
+
       var response = await loginData.postData(
         email.text,
         password.text,
       );
+
       statusRequest = handlingData(response);
-      if (StatusRequest.sucess == statusRequest) {
+
+      if (StatusRequest.success == statusRequest) {
         if (response['status'] == "success" &&
             response['data']['delivery_approve'] == "1") {
-          myServices.sharedPreferences
-              .setString('deliveryId', response['data']['delivery_id']);
-          myServices.sharedPreferences
-              .setString('deliveryName', response['data']['delivery_name']);
-          myServices.sharedPreferences
-              .setString('deliveryEmail', response['data']['delivery_email']);
-          myServices.sharedPreferences
-              .setString('deliveryPhone', response['data']['delivery_phone']);
+          final user = DeliveryUser.fromJson(response['data']);
+
+          myServices.sharedPreferences.setString(
+            'deliveryUser',
+            jsonEncode(user.toJson()),
+          );
+
           myServices.sharedPreferences.setString('step', 'Auth');
-          NotificationsHelper.firebaseMessaging.subscribeToTopic('servises');
+
+          await NotificationsHelper.instance.subscribeToTopic('servises');
+
           Get.offNamed(AppRoute.home);
         }
         if (response['status'] == "failure") {
@@ -53,7 +60,8 @@ class LogeinControllerImp extends LogeinCotroller {
           statusRequest = StatusRequest.failure;
         }
       } else {
-        StatusRequest.failure;
+        Get.defaultDialog(title: 'OPPPS!', middleText: "server error");
+        statusRequest = StatusRequest.failure;
       }
 
       update();

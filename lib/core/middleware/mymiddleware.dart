@@ -6,13 +6,10 @@ import '../services/services.dart';
 
 class Mymiddleware extends GetMiddleware {
   MyServices myServices = Get.find();
-  //int? get Priority => 1;
 
   @override
   RouteSettings? redirect(String? route) {
     if (myServices.sharedPreferences.getString("step") == "Auth") {
-      print('--------------------فهمك عمتا !! --------------------------');
-      //print('-------------------- SOMA ❤️❤️❤️ --------------------------');
       return const RouteSettings(name: AppRoute.home);
     }
 
